@@ -6,193 +6,303 @@
     <title>OsMutation - OpenVZ/LXC 虚拟化系统重装工具</title>
     <style>
         :root {
-            --primary-color: #2563eb;
-            --bg-color: #f8fafc;
-            --text-color: #1e293b;
-            --code-bg: #1e1e1e;
+            /* 浅色模式变量 */
+            --primary: #2563eb;
+            --bg: #adcaad;
+            --card-bg: #caecd1;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --code-bg: #111827;
+            --code-text: #e5e7eb;
             --warning-bg: #fff7ed;
             --warning-border: #f97316;
+            --warning-text: #9a3412;
+            --border: #e2e8f0;
+            --toast-bg: #10b981;
+        }
+
+        [data-theme="dark"] {
+            /* 黑暗模式变量 */
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --code-bg: #000000;
+            --code-text: #34d399; /* 终端绿 */
+            --warning-bg: #2a1b10;
+            --warning-border: #ea580c;
+            --warning-text: #ffedd5;
+            --border: #334155;
+            --toast-bg: #059669;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
+            color: var(--text);
+            background-color: var(--bg);
             margin: 0;
             padding: 0;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
             max-width: 850px;
-            margin: 40px auto;
-            padding: 0 20px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
         header {
-            text-align: center;
-            margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
+        h1 { font-size: 2.2rem; color: var(--primary); margin: 0; }
+        .subtitle { color: var(--text-muted); margin-top: 5px; font-size: 1.1rem; }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #64748b;
+        /* 主题切换开关 */
+        .theme-toggle {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
         }
 
         .card {
-            background: white;
-            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            margin-bottom: 24px;
+            transition: transform 0.2s;
         }
 
-        h2 {
-            border-left: 5px solid var(--primary-color);
-            padding-left: 15px;
-            margin-top: 0;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
+        h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; }
 
-        .code-block {
+        /* 代码框样式 - 点击复制 */
+        .code-container {
+            position: relative;
             background: var(--code-bg);
-            color: #d4d4d4;
-            padding: 10px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 15px 0;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            margin: 16px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
         }
 
-        /* 视频容器样式 */
-        .video-container {
-            margin: 30px 0;
+        .code-container:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .code-container::after {
+            content: "点击复制代码";
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 0.75rem;
+            color: #4b5563;
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .code-container:hover::after { opacity: 1; }
+
+        pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            color: var(--code-text);
+            font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* 视频容器 */
+        .video-box {
             background: #000;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            min-height: 400px; /* 预留高度防止跳动 */
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .warning {
-            background-color: var(--warning-bg);
+            background: var(--warning-bg);
             border: 1px solid var(--warning-border);
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
+            color: var(--warning-text);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
         }
 
-        .warning h3 {
-            color: var(--warning-border);
-            margin-top: 0;
-            display: flex;
-            align-items: center;
+        /* 复制成功的提示 */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--toast-bg);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; }
 
         .footer {
             text-align: center;
-            padding: 40px 0;
-            color: #94a3b8;
+            color: var(--text-muted);
+            margin-top: 60px;
             font-size: 0.9rem;
         }
 
-        a { color: var(--primary-color); text-decoration: none; }
+        a { color: var(--primary); text-decoration: none; }
         a:hover { text-decoration: underline; }
 
-        /* 响应式调整 */
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
         @media (max-width: 600px) {
-            .container { margin: 20px auto; }
-            h1 { font-size: 2rem; }
-            .card { padding: 20px; }
+            .container { padding: 20px; }
+            h1 { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
 
+<div id="toast">已复制到剪贴板 !</div>
+
 <div class="container">
     <header>
-        <h1>OsMutation</h1>
-        <p class="subtitle">为 OpenVZ/LXC VPS 提供一键重装 Debian/CentOS/Alpine 服务</p>
+        <div>
+            <h1>OsMutation</h1>
+            <p class="subtitle">OpenVZ/LXC VPS 系统一键重装工具</p>
+        </div>
+        <button class="theme-toggle" id="themeBtn" title="切换模式">
+            <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
     </header>
 
     <!-- 功能特性 -->
-    <section class="card">
+    <div class="card">
         <h2>✨ 功能特性</h2>
         <ul>
             <li>同时支持 <strong>OpenVZ 7</strong> 和 <strong>LXC</strong> 虚拟化架构。</li>
             <li>支持重装为多种主流操作系统（Debian, CentOS, Alpine）。</li>
             <li>极其轻量，针对小内存和磁盘进行了优化。</li>
         </ul>
-    </section>
+    </div>
 
-    <!-- 使用方法 -->
-    <section class="card">
-        <h2>🚀 使用方法</h2>
-        <p><strong>标准重装：</strong></p>
-        <div class="code-block">
+    <div class="card">
+        <h2>🚀 快速开始</h2>
+        <p>点击下方任意代码区域即可直接复制命令：</p>
+        
+        <p><strong>标准版重装：</strong></p>
+        <div class="code-container" onclick="copyCode(this)">
             <pre>wget -qO OsMutation.sh https://raw.githubusercontent.com/LloydAsp/OsMutation/main/OsMutation.sh && chmod u+x OsMutation.sh && ./OsMutation.sh</pre>
         </div>
-        
-        <p>或使用 curl：</p>
-        <div class="code-block">
-            <pre>curl -so OsMutation.sh https://raw.githubusercontent.com/LloydAsp/OsMutation/main/OsMutation.sh && chmod u+x OsMutation.sh && ./OsMutation.sh</pre>
+
+        <p><strong>或使用 curl：</strong></p>
+        <div class="code-container" onclick="copyCode(this)">
+            <pre>wget -qO OsMutation.sh https://raw.githubusercontent.com/LloydAsp/OsMutation/main/OsMutation.sh && chmod u+x OsMutation.sh && ./OsMutation.sh</pre>
         </div>
 
-        <p><strong>针对小磁盘（小于 1GiB，实验性支持）：</strong></p>
-        <div class="code-block">
+        <p><strong>小硬盘专用版 (实验性，磁盘 < 1GiB)：</strong></p>
+        <div class="code-container" onclick="copyCode(this)">
             <pre>wget -qO OsMutation.sh https://raw.githubusercontent.com/LloydAsp/OsMutation/main/OsMutationTight.sh && chmod u+x OsMutation.sh && ./OsMutation.sh</pre>
         </div>
-    </section>
+    </div>
 
-    <!-- 视频演示部分 -->
-    <section class="video-container">
-        <!-- 引入 Asciinema 官方播放脚本 -->
+    <!-- 演示视频 -->
+    <div class="video-box">
         <script src="https://asciinema.org/a/582009.js" id="asciicast-582009" async></script>
-    </section>
+    </div>
 
-    <!-- 注意事项 -->
-    <section class="warning">
-        <h3>⚠️ 注意事项（必读）</h3>
+    <div class="warning">
+        <h2 style="font-size: 1.2rem;">⚠️ 注意事项（必读）</h2>
         <ul>
             <li><strong>数据擦除警告：</strong> 执行脚本将安装全新的系统，旧数据会被彻底抹除！请务必提前备份重要数据。</li>
             <li><strong>虚拟化支持：</strong> 仅支持 OpenVZ 7+ 和 LXC。不支持 OpenVZ 6。</li>
             <li><strong>不支持虚拟机：</strong> 本工具不适用于 KVM、Xen 或 VMware 等架构。</li>
         </ul>
-    </section>
+    </div>
 
-    <!-- 原理解析 -->
-    <section class="card">
+    <div class="card">
         <h2>🔍 工作原理</h2>
-        <p>OpenVZ 和 LXC 属于容器虚拟化技术。宿主机的内核由所有容器共享，操作系统所需的应用程序和运行库则打包在容器内部。</p>
+        <p>OpenVZ 和 LXC 属于容器虚拟化技术，与宿主机共享内核，操作系统所需的应用程序和运行库则打包在容器内部。</p>
         <p><strong>OsMutation</strong> 的原理是通过直接替换容器内的系统文件来实现“重装”。简单直接，唯一需要注意的是执行顺序，因为文件之间存在依赖关系。</p>
-    </section>
+    </div>
 
-    <section class="card">
+    <div class="card">
         <h2>📦 模板来源</h2>
         <ul>
-            <li><strong>LXC 模板：</strong> 直接从 <a href="http://images.linuxcontainers.org" target="_blank">linuxcontainers.org</a> 下载。</li>
-            <li><strong>OpenVZ 7 模板：</strong> 提取自 OpenVZ 7 官方 ISO 镜像。</li>
+            <li><strong>LXC 模板:</strong> 直接从 <a href="http://images.linuxcontainers.org" target="_blank">linuxcontainers.org</a> 下载。</li>
+            <li><strong>OpenVZ 7 模板:</strong> 提取自 OpenVZ 官方 ISO 镜像。</li>
         </ul>
-    </section>
-    
-    <!-- 底部 -->
+    </div>
+
     <div class="footer">
-        <p>项目源码: <a href="https://github.com/LloydAsp/OsMutation" target="_blank">GitHub - OsMutation</a></p>
-        <p>Inspired by <a href="https://gist.github.com/trimsj/c1fefd650b5f49ceb8f3efc1b6a1404d" target="_blank">trimsj</a></p>
-        <p>© 2024 OsMutation Project</p>
+        <p>项目源码: <a href="https://github.com/LloydAsp/OsMutation" target="_blank">GitHub - LloydAsp/OsMutation</a></p>
+        <p>Inspired by trimsj | 2024</p>
     </div>
 </div>
+
+<script>
+    // 复制功能
+    function copyCode(element) {
+        const text = element.querySelector('pre').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            
+            // 视觉点击反馈
+            element.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                element.style.transform = 'translateY(-2px)';
+                toast.style.display = 'none';
+            }, 1500);
+        });
+    }
+
+    // 主题切换功能
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.documentElement;
+
+    // 初始检测
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        body.setAttribute('data-theme', 'dark');
+    }
+
+    themeBtn.addEventListener('click', () => {
+        const currentTheme = body.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            body.removeAttribute('data-theme');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+        }
+    });
+
+    // 监听系统主题变化
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (e.matches) body.setAttribute('data-theme', 'dark');
+        else body.removeAttribute('data-theme');
+    });
+</script>
 
 </body>
 </html>
