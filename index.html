@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OsMutation - OpenVZ/LXC 虚拟化系统重装工具</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --code-bg: #1e1e1e;
+            --warning-bg: #fff7ed;
+            --warning-border: #f97316;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            border-left: 5px solid var(--primary-color);
+            padding-left: 15px;
+            margin-top: 0;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 0.9rem;
+        }
+
+        /* 视频容器样式 */
+        .video-container {
+            margin: 30px 0;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            min-height: 400px; /* 预留高度防止跳动 */
+        }
+
+        .warning {
+            background-color: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .warning h3 {
+            color: var(--warning-border);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        a { color: var(--primary-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* 响应式调整 */
+        @media (max-width: 600px) {
+            .container { margin: 20px auto; }
+            h1 { font-size: 2rem; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>OsMutation</h1>
+        <p class="subtitle">为 OpenVZ/LXC VPS 提供一键重装 Debian/CentOS/Alpine 服务</p>
+    </header>
+
+    <!-- 功能特性 -->
+    <section class="card">
+        <h2>✨ 功能特性</h2>
+        <ul>
+            <li>同时支持 <strong>OpenVZ 7</strong> 和 <strong>LXC</strong> 虚拟化架构。</li>
+            <li>支持重装为多种主流操作系统（Debian, CentOS, Alpine）。</li>
+            <li>极其轻量，针对小内存和磁盘进行了优化。</li>
+        </ul>
+    </section>
+
+    <!-- 使用方法 -->
+    <section class="card">
+        <h2>🚀 使用方法</h2>
+        <p>在终端中复制并运行以下命令：</p>
+        
+        <p><strong>1. 标准重装脚本：</strong></p>
+        <div class="code-block">
+            wget -qO OsMutation.sh https://raw.githubusercontent.com/LloydAsp/OsMutation/main/OsMutation.sh && chmod u+x OsMutation.sh && ./OsMutation.sh
+        </div>
+
+        <p><strong>2. 针对小磁盘 VPS（小于 1GiB）：</strong></p>
+        <div class="code-block">
+            wget -qO OsMutation.sh https://raw.githubusercontent.com/LloydAsp/OsMutation/main/OsMutationTight.sh && chmod u+x OsMutation.sh && ./OsMutation.sh
+        </div>
+    </section>
+
+    <!-- 视频演示部分 -->
+    <section class="video-container">
+        <!-- 引入 Asciinema 官方播放脚本 -->
+        <script src="https://asciinema.org/a/582009.js" id="asciicast-582009" async></script>
+    </section>
+
+    <!-- 注意事项 -->
+    <section class="warning">
+        <h3>⚠️ 注意事项（必读）</h3>
+        <ul>
+            <li><strong>数据擦除警告：</strong> 执行脚本将安装全新的系统，旧数据会被彻底抹除！请务必提前备份重要数据。</li>
+            <li><strong>虚拟化支持：</strong> 仅支持 OpenVZ 7+ 和 LXC。不支持 OpenVZ 6。</li>
+            <li><strong>不支持虚拟机：</strong> 本工具不适用于 KVM、Xen 或 VMware 等架构。</li>
+        </ul>
+    </section>
+
+    <!-- 原理解析 -->
+    <section class="card">
+        <h2>🔍 工作原理</h2>
+        <p>OpenVZ 和 LXC 属于容器虚拟化技术。宿主机的内核由所有容器共享，操作系统所需的应用程序和运行库则打包在容器内部。</p>
+        <p><strong>OsMutation</strong> 的原理是通过直接替换容器内的系统文件来实现“重装”。简单直接，唯一需要注意的是执行顺序，因为文件之间存在依赖关系。</p>
+    </section>
+
+    <section class="card">
+        <h2>📦 模板来源</h2>
+        <ul>
+            <li><strong>LXC 模板：</strong> 直接从 <a href="http://images.linuxcontainers.org" target="_blank">linuxcontainers.org</a> 下载。</li>
+            <li><strong>OpenVZ 7 模板：</strong> 提取自 OpenVZ 7 官方 ISO 镜像。</li>
+        </ul>
+    </section>
+    
+    <!-- 底部 -->
+    <div class="footer">
+        <p>项目源码: <a href="https://github.com/LloydAsp/OsMutation" target="_blank">GitHub - OsMutation</a></p>
+        <p>Inspired by <a href="https://gist.github.com/trimsj/c1fefd650b5f49ceb8f3efc1b6a1404d" target="_blank">trimsj</a></p>
+        <p>© 2024 OsMutation Project</p>
+    </div>
+</div>
+
+</body>
+</html>
